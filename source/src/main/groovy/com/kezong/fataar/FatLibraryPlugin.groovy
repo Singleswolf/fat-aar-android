@@ -177,7 +177,7 @@ class FatLibraryPlugin implements Plugin<Project> {
             dependencies.each { dependency ->
                 boolean match = false
                 artifacts.each { artifact ->
-                    if (dependency.moduleName == artifact.name) {
+                    if (dependency.name == artifact.moduleVersion.toString()) {
                         match = true
                     }
                 }
