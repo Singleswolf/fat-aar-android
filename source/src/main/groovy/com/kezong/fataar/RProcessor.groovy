@@ -55,9 +55,31 @@ class RProcessor {
         def reBundleAar = createBundleAarTask(mAarUnZipDir, mAarOutputDir, mAarOutputPath)
 
         reBundleAar.doFirst {
+            Collection<String> abi_include = new ArrayList<>()
+            /*ndk { abiFilters 'armeabi-v7a','arm64-v8a' }*/
+            mProject.android.defaultConfig.ndk.abiFilters.each {
+                abi_include.add(it)
+            }
+
+            /* has set ndk abiFilters configuration */
+            def abi_exclude = new HashSet<>()
+            if (abi_include.size() > 0) {
+                mLibraries.each {
+                    if (it.jniFolder != null && it.jniFolder.exists()) {
+                        it.jniFolder.eachDir {
+                            if (!abi_include.contains(it.name)) {
+                                abi_exclude.add(it.name)
+                            }
+                        }
+                    }
+                }
+            }
             mProject.copy {
                 from mProject.zipTree(mAarOutputPath)
                 into mAarUnZipDir
+                abi_exclude.each {
+                    exclude "*/${it.toString()}/*.so"
+                }
             }
             deleteEmptyDir(mAarUnZipDir)
         }
