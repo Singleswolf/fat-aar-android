@@ -1,5 +1,6 @@
 apply plugin: 'groovy'
 apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'maven'
 
 buildscript {
     repositories {
@@ -42,3 +43,11 @@ publish {
     website = 'https://github.com/kezong/fat-aar-android'
 }
 
+version = '1.2.10'
+group = 'com.kezong'
+archivesBaseName = 'fat-aar'
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: 'file:repo')
+    }
+}
